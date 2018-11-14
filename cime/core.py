@@ -2,48 +2,112 @@ from sympy import *
 from sympy.matrices import *
 import numpy as np
 import matplotlib.pyplot as plt
-init_printing(use_latex=True)
+# ~ init_printing(use_latex=True)
 
 
 def deg2rad(angle):
-    return ( (angle)*(pi/180) ).evalf()
+    """
+    Converts degrees to radians
+    
+    Parameters
+    ----------
+    angle : float, int
+        Angle in degrees
+    
+    
+    Returns
+    -------
+    ar : float
+        Angle in radians
+    
+    
+    Examples
+    --------
+    >>> deg2rad(30)
+    0.523598775598299
+    >>> deg2rad(90)
+    1.57079632679490
+    >>> deg2rad(180)
+    3.14159265358979
+    """
+    ar = ( (angle)*(pi/180) ).evalf()
+    return ar
     
 def rad2deg(angle):
-    return ( (angle)*(180/pi) ).evalf()
-
-
-def newton_raphson(J,b,X0,vals={},eps=1e-6):
-    """ Método de Newton-Raphson multivariable """
-    k = 1
-    b = b.subs(vals).evalf()
-    while True:
-        x = ((J.subs(X0).subs(vals)).inv()*b.subs(X0)).evalf()
-        if x.norm()<eps: break
-        for jj,ky in enumerate(X0):
-            X0[ky] += (x[jj]).evalf()
-        k += 1
-    return X0,x,k
-
-
-def vexp(r, theta, f="r"):
     """
-    Convierte un vector de la forma [r e^{j theta}] a la correspondiente 
-    [r*cos(theta),  r*sin(theta)].
-    """
-    if f == 'j':
-        return Matrix([-r*sin(theta), r*cos(theta)])
-    else:
-        return Matrix([r*cos(theta), r*sin(theta)])
-
-
-def plotlink(p0, u, *args, **kwargs):
-    """ Grafica una línea, dados el punto inicial (p0x,p0y) y sus compontes (ux,uy) """
-    plt.plot([p0[0],p0[0]+u[0]], [p0[1],p0[1]+u[1]], *args, **kwargs)
+    Converts radians to degrees
     
+    Parameters
+    ----------
+    angle : float, int
+        Angle in radians
+    
+    
+    Returns
+    -------
+    ad : float
+        Angle in radians
+        
+    
+    Examples
+    --------
+    >>> rad2deg(pi)
+    180.000000000000
+    >>> rad2deg(pi/2)
+    90.0000000000000
+    >>> rad2deg(2*pi)
+    360.000000000000
+    
+    """
+    ad = ( (angle)*(180/pi) ).evalf()
+    return ad
+
+
+def vexp(r, theta, j=False):
+    """
+    
+    Parameters
+    ----------
+    r : int, float, symbol
+        Vector magnitude
+    theta : int, float, symbol
+        Vector orientation
+    j : bool
+        ¿Is multiplied by "j"?
+    
+    Returns
+    -------
+    R : :class:`sympy.matrices.dense.MutableDenseMatrix`
+        Vector in rectangular coordinates
+    
+    """
+    if j:
+        R = Matrix([-r*sin(theta), r*cos(theta)])
+    else:
+        R = Matrix([r*cos(theta), r*sin(theta)])
+    return R
+
 
 def grubler(L,J1,J2):
-    """ Calcula los GDL de un mecanismo plano utilizando el criterio de Grübler-Kutzbach """
-    return 3*(L-1) - 2*J1 - J2
+    """
+    Calculates the DOF of a linkage using Grübler-Kutzbach criterion
+    
+    Parameters
+    ----------
+    L : int
+        Number of links
+    J1 : int
+        1-DOF pairs
+    J2 : int
+        2-DOF pairs
+        
+    Returns
+    -------
+    M : int
+        Degrees of freedom
+    """
+    M = 3*(L-1) - 2*J1 - J2
+    return M
     
 
 def generate_grashof_fourbar(shortest=1, slfactor=2):
@@ -57,6 +121,12 @@ def generate_grashof_fourbar(shortest=1, slfactor=2):
         if ( (S + L) < (P + Q) ) and (P>S) and (Q>S):
             done = True
     return S,L,P,Q
+    
+    
+def isgrashof(l1,l2,l3,l4):
+    """
+    Determine if a four-bar linkage is Grashof class.
+    """
     
 
 if __name__=="__main__":
