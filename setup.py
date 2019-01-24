@@ -4,11 +4,11 @@ from setuptools import setup
 
 setup(name='cime',
       version='0.1.0',
-      description='Utilidades para cinemática de mecanismos',
-      author='IRO-UPGto',
+      description='A Python library for kinematic analysis of planar linkages',
+      author='P.J. De Los Santos',
       author_email='jdelossantos@upgto.edu.mx',
       license = "MIT",
-      keywords=["Kinematics","Mechanism","Machinery"],
+      keywords=["Kinematics","Mechanism","Machinery","Linkages"],
       url='https://github.com/iro-upgto/cime',
       packages=[''],
       classifiers=[

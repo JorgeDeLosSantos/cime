@@ -5,64 +5,6 @@ import matplotlib.pyplot as plt
 # ~ init_printing(use_latex=True)
 
 
-def deg2rad(angle):
-    """
-    Converts degrees to radians
-    
-    Parameters
-    ----------
-    angle : float, int
-        Angle in degrees
-    
-    
-    Returns
-    -------
-    ar : float
-        Angle in radians
-    
-    
-    Examples
-    --------
-    >>> deg2rad(30)
-    0.523598775598299
-    >>> deg2rad(90)
-    1.57079632679490
-    >>> deg2rad(180)
-    3.14159265358979
-    """
-    ar = ( (angle)*(pi/180) ).evalf()
-    return ar
-    
-def rad2deg(angle):
-    """
-    Converts radians to degrees
-    
-    Parameters
-    ----------
-    angle : float, int
-        Angle in radians
-    
-    
-    Returns
-    -------
-    ad : float
-        Angle in radians
-        
-    
-    Examples
-    --------
-    >>> rad2deg(pi)
-    180.000000000000
-    >>> rad2deg(pi/2)
-    90.0000000000000
-    >>> rad2deg(2*pi)
-    360.000000000000
-    
-    """
-    ad = ( (angle)*(180/pi) ).evalf()
-    return ad
-
-
 def vexp(r, theta, j=False):
     """
     
@@ -127,9 +69,119 @@ def isgrashof(l1,l2,l3,l4):
     """
     Determine if a four-bar linkage is Grashof class.
     """
+    links = [l1,l2,l3,l4]
+    S = min(links) # Shortest link
+    L = max(links) # Largest link
+    idxL = links.index(L)
+    idxS = links.index(S)
+    P, Q = [links[idx] for idx in range(len(links)) if not(idx in (idxL,idxS))] #other links
+    if (S + L) <= (P + Q): # Checks Grashof condition
+        return True
+    else:
+        return False
+        
+        
+class Link(object):
+    pass
+    
+    
+class ClosedChain(object):
+    pass
+
+
+class Vector3D(object):
+    def __init__(self,x,y,z):
+        self.components = x,y,z
+        self.x = x 
+        self.y = y
+        self.z = z
+        
+    def get_orientation(self):
+        """ Dir Cosines """
+        thx = acos( self.x / self.get_norm() )
+        thy = acos( self.y / self.get_norm() )
+        thz = acos( self.z / self.get_norm() )
+        return thx,thy,thz
+        
+    def get_norm(self):
+        n = sqrt( self.x**2 + self.y**2 + self.z**2 )
+        return n
+        
+    def __str__(self):
+        s = "[{x}\n{y}\n{z}]".format(x=self.x, y=self.y ,z=self.z)
+        return s
     
 
+
+
+class Vector2D(object):
+    def __init__(self,x,y):
+        self.components = x,y
+        self.x = x 
+        self.y = y
+        
+    @property
+    def theta(self):
+        return self.get_orientation()
+    
+    @property
+    def r(self):
+        return self.get_norm()
+        
+    def get_orientation(self):
+        """ Dir Cosines """
+        th = atan2(self.y, self.x)
+        return th
+        
+    def get_norm(self):
+        n = sqrt( self.x**2 + self.y**2)
+        return n
+        
+    def dot(self, other):
+        ux, uy = self.x, self.y
+        vx, vy = other.x, other.y
+        dp = ux*vx + uy*vy
+        return dp
+        
+    def cross(self, other):
+        ux, uy = self.x, self.y
+        vx, vy = other.x, other.y
+        wz = ux*vy - uy*vx
+        return Vector3D(0,0,wz)
+                
+    def __add__(self, other):
+        ux, uy = self.x, self.y
+        vx, vy = other.x, other.y
+        return Vector2D(ux + vx, uy + vy)
+    
+    def __str__(self):
+        s = "[{x}, {y}]".format(x=self.x, y=self.y)
+        return s
+        
+
+class PositionVector2D(object):
+    def __init__(self, **kwargs):
+        self.__dict__ = kwargs
+        print(vars(self))
+        if "x" in vars(self) and "y" in vars(self):
+            self.r = sqrt(self.x**2 + self.y**2)
+            self.theta = atan2(self.y, self.x)
+        elif "r" in vars(self) and "theta" in vars(self):
+            self.x = self.r*cos(self.theta)
+            self.y = self.r*sin(self.theta)
+    
+    def velocity(self):
+        pass
+        
+    def __str__(self):
+        return "S"
+
+
 if __name__=="__main__":
-    print( generate_grashof_fourbar(100, 1.6) )
+    r = symbols("r", cls=Function)
+    th = symbols("theta", cls=Function)
+    u = PositionVector2D(r = r, theta = th)
+    print(u)
+    
         
     
