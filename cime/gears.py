@@ -3,11 +3,11 @@ import numpy as np
 import math
         
 
-def compound_train(mv, maxstages=5, eps=0.001):
+def compound_train(mv, maxstages=5, eps=0.001, Nmin=14, Nmax=200):
     r = (mv)**(-1)
     n = 1
     while n < maxstages:
-        N1, N2 = nstage(r, n, eps)
+        N1, N2 = nstage(r, n, eps, Nmin, Nmax)
         if not(N1 is None):
             if isacceptable((N1/N2)**n, mv, eps):
                 break
@@ -19,13 +19,13 @@ def compound_train(mv, maxstages=5, eps=0.001):
     err = abs((mv-mvc)/mv)
     return N1,N2,n,err
         
-def nstage(r,n,eps):
+def nstage(r,n,eps,Nmin,Nmax):
     f = r**(1/n)
-    if f > 10:
+    if f > (Nmax/Nmin):
         return None, None
-    for N1 in range(14,24):
+    for N1 in range(Nmin,Nmax):
         N2 = N1*f
-        if isacceptable(N2,round(N2),eps):
+        if Nmin <= round(N2) <= Nmax:
             return N1,round(N2)
     return None,None
     

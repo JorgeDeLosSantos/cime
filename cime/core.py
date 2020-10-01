@@ -87,9 +87,89 @@ class Link(object):
     
 class ClosedChain(object):
     pass
+    
 
 
-class Vector3D(object):
+class ClosedLoopVector(object):
+    def __init__(self, *vectors):
+        k = 1
+        for vector in vectors:
+            vector.set_label(str(k))
+            vector.update_kin_symbols()
+            k += 1
+        self.vectors = vectors
+            
+    def get_pos_eqs(self):
+        pos_eqs = vexp(0,0)
+        for vec in self.vectors:
+            pos_eqs += vexp(vec.r, vec.theta)
+        return pos_eqs
+    
+    def get_vel_eqs(self):
+        pass
+            
+    def solve_pos(self):
+        pass
+        
+
+class VectorKin(object):
+    def __init__(self, case, **props):
+        self.__dict__ = props
+        self.case = case
+        _kprops = {"r":"r",
+                   "theta":"\\theta",
+                   "omega":"\\omega",
+                   "rp":"\\dot{r}",
+                   "alpha":"\\alpha",
+                   "rpp":"\\ddot{r}"}
+        if self.case == 1:
+            self.rp = 0
+            self.rpp = 0
+        elif self.case == 2:
+            self.omega = 0
+            self.alpha = 0
+        elif self.case == 3:
+            pass
+        elif self.case == 4:
+            self.omega = 0
+            self.alpha = 0
+            self.rp = 0
+            self.rpp = 0
+        for kprop in _kprops:
+            if kprop not in props:
+                self.__dict__.update({kprop:symbols(_kprops[kprop])})
+        self.label = ""
+        
+    
+    def set_label(self,label):
+        self.label = label
+        
+    def update_kin_symbols(self):
+        _kprops = {"r":"r_{"+self.label+"}",
+                   "theta":"\\theta_{"+self.label+"}",
+                   "omega":"\\omega_{"+self.label+"}",
+                   "rp":"\\dot{r}_{"+self.label+"}",
+                   "alpha":"\\alpha_{"+self.label+"}",
+                   "rpp":"\\ddot{r}_{"+self.label+"}"}
+        for kprop in _kprops:
+            if not(type(self.__dict__[kprop]) is int 
+               or type(self.__dict__[kprop]) is float 
+               or type(self.__dict__[kprop]) is Float 
+               or type(self.__dict__[kprop]) is Mul
+               or type(self.__dict__[kprop]) is Add):
+                self.__dict__.update({kprop:symbols(_kprops[kprop])})
+        
+    def __str__(self):
+        return "S"
+
+
+class _Vec(Matrix):
+    pass
+    # ~ def __init__(self, *args, **kwargs):
+        # ~ Matrix.__init__(self, *args, **kwargs)
+    
+
+class _Vector3D_(object):
     def __init__(self,x,y,z):
         self.components = x,y,z
         self.x = x 
@@ -110,11 +190,9 @@ class Vector3D(object):
     def __str__(self):
         s = "[{x}\n{y}\n{z}]".format(x=self.x, y=self.y ,z=self.z)
         return s
-    
 
 
-
-class Vector2D(object):
+class _Vector2D_(object):
     def __init__(self,x,y):
         self.components = x,y
         self.x = x 
@@ -159,29 +237,12 @@ class Vector2D(object):
         return s
         
 
-class PositionVector2D(object):
-    def __init__(self, **kwargs):
-        self.__dict__ = kwargs
-        print(vars(self))
-        if "x" in vars(self) and "y" in vars(self):
-            self.r = sqrt(self.x**2 + self.y**2)
-            self.theta = atan2(self.y, self.x)
-        elif "r" in vars(self) and "theta" in vars(self):
-            self.x = self.r*cos(self.theta)
-            self.y = self.r*sin(self.theta)
-    
-    def velocity(self):
-        pass
-        
-    def __str__(self):
-        return "S"
 
 
 if __name__=="__main__":
-    r = symbols("r", cls=Function)
-    th = symbols("theta", cls=Function)
-    u = PositionVector2D(r = r, theta = th)
-    print(u)
-    
-        
+    r = symbols("r")
+    th = symbols("theta")
+    u = VectorKin(1,omega=10)
+    s = _Vec([1,2,3])
+    print(s)
     
