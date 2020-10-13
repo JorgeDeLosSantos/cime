@@ -7,4 +7,3 @@ w1,w2,w3,w4,w5,w6,w7,w8,w9 = symbols("\\omega_1:10", real=True)
 aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,aa9 = symbols("\\alpha_1:10", real=True)
 r1p,r2p,r3p,r4p,r5p,r6p,r7p,r8p,r9p = symbols("\\dot{r}_1:10", real=True)
 r1pp,r2pp,r3pp,r4pp,r5pp,r6pp,r7pp,r8pp,r9pp = symbols("\\ddot{r}_1:10", real=True)
-

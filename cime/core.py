@@ -80,14 +80,6 @@ def isgrashof(l1,l2,l3,l4):
     else:
         return False
         
-        
-class Link(object):
-    pass
-    
-    
-class ClosedChain(object):
-    pass
-    
 
 
 class ClosedLoopVector(object):

@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-        
 
 def compound_train(mv, maxstages=5, eps=0.001, Nmin=14, Nmax=200):
     r = (mv)**(-1)
